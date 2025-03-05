@@ -83,8 +83,8 @@ async def ask(ctx, keyword, is_me):
     is_assistant_admin = ctx['user_id'] in config['assistant_admins']
     is_admin = util.is_group_admin(ctx) or is_super_admin
 
+    # JAG: Add a new role assistant admin
     if config['rule']['only_admin_answer_all'] and not is_me and not is_admin \
-            # JAG: Add a new role assistant admin
             and not is_assistant_admin:
         return '回答所有人的只能管理设置啦'
 
