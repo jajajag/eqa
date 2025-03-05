@@ -79,9 +79,13 @@ async def eqa_main(*params):
 # 设置问题的函数
 async def ask(ctx, keyword, is_me):
     is_super_admin = ctx['user_id'] in admins
+    # JAG: Add a new role assistant admin
+    is_assistant_admin = ctx['user_id'] in config['assistant_admins']
     is_admin = util.is_group_admin(ctx) or is_super_admin
 
-    if config['rule']['only_admin_answer_all'] and not is_me and not is_admin:
+    if config['rule']['only_admin_answer_all'] and not is_me and not is_admin \
+            # JAG: Add a new role assistant admin
+            and not is_assistant_admin:
         return '回答所有人的只能管理设置啦'
 
     question_handler = config['comm']['answer_me'] if is_me else config['comm']['answer_all']

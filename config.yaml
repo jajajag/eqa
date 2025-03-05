@@ -1,6 +1,8 @@
 # 管理员
 admins:
   - 389897773
+assistant_admins:
+  - 389897773
 
 # 缓存存放目录 该目录包括存放问答数据库和图片
 cache_dir: ./data/
