@@ -172,8 +172,15 @@ async def answer(ctx, _reg_flag=False):
 
     # 获取到当前群的列表 判断是否来自该群 或者是否是超级管理员
     # 超级管理员设置的是否为所有群问答
-    ans_list = util.filter_list(ans_list, lambda x: group_id == x['group_id'] or (
-        x['user_id'] in admins if super_admin_is_all_group else False))
+    #ans_list = util.filter_list(ans_list, lambda x: group_id == x['group_id'] or (
+    #    x['user_id'] in admins if super_admin_is_all_group else False))
+
+    # JAG: 优先检查当前群的问答，如果没有再检查全群问答
+    group_ans_list = util.filter_list(ans_list, lambda x: group_id == x['group_id'])
+    if not group_ans_list and super_admin_is_all_group:
+        ans_list = util.filter_list(ans_list, lambda x: x['user_id'] in admins)
+    else:
+        ans_list = group_ans_list
 
     # 木有在这群
     if not ans_list and _reg_flag:
