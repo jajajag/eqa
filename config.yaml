@@ -4,6 +4,9 @@ admins:
 assistant_admins:
   - 389897773
 
+# 同时存在本群管理和超级管理的问题，优先回答本群
+answer_local: 5
+
 # 缓存存放目录 该目录包括存放问答数据库和图片
 cache_dir: ./data/
 
@@ -35,7 +38,6 @@ comm:
     - 全部问答
     - 所有问答
 
-
 #规则
 rule:
   # 是否只允许管理员（包括群管）设置 comm.answer_all 的问题, true 的话群员就只能用 comm.answer_me 设置的问题了
@@ -64,7 +66,6 @@ rule:
 
   # 是否能使用cq码的自定义url 需要链接前面带个? 比如 file=?http://
   use_cq_code_image_url: true
-
 
 # 打印字符配置
 str:
