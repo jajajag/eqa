@@ -193,7 +193,7 @@ async def answer(ctx, _reg_flag=False):
     else:
         # 否则选最后一个
         #ans = ans_list[-1]
-        # JAG: 优先选最后三项中非管理员的回答，否则选最后一个
+        # JAG: 优先选最后几项中非管理员的回答，否则选最后一个
         al = config['answer_local']
         ans = next((c for c in reversed(
             ans_list[-al:]) if c['user_id'] not in admins), ans_list[-1])
