@@ -193,10 +193,10 @@ async def answer(ctx, _reg_flag=False):
     else:
         # 否则选最后一个
         #ans = ans_list[-1]
-        # JAG: 优先选最后几项中非管理员的回答，否则选最后一个
+        # JAG: 优先选最后几项中最新的本群回答，否则选最新的全群问答
         al = config['answer_local']
         ans = next((c for c in reversed(
-            ans_list[-al:]) if c['user_id'] not in admins), ans_list[-1])
+            ans_list[-al:]) if c['group_id'] == group_id), ans_list[-1])
 
     # 判断是否是设置为自己的回复
     if ans['is_me']:
