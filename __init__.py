@@ -194,8 +194,9 @@ async def answer(ctx, _reg_flag=False):
         # 否则选最后一个
         #ans = ans_list[-1]
         # JAG: 优先选最后三项中非管理员的回答，否则选最后一个
-        ans = next((c for c in reversed(ans_list[-3:]) if c['user_id'] not in admins),
-                   ans_list[-1])
+        al = config['answer_local']
+        ans = next((c for c in reversed(
+            ans_list[-al:]) if c['user_id'] not in admins), ans_list[-1])
 
     # 判断是否是设置为自己的回复
     if ans['is_me']:
