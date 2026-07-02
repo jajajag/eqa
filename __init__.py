@@ -79,13 +79,9 @@ async def eqa_main(*params):
 # 设置问题的函数
 async def ask(ctx, keyword, is_me):
     is_super_admin = ctx['user_id'] in admins
-    # JAG: Add a new role assistant admin
-    is_assistant_admin = ctx['user_id'] in config['assistant_admins']
     is_admin = util.is_group_admin(ctx) or is_super_admin
 
-    # JAG: Add a new role assistant admin
-    if config['rule']['only_admin_answer_all'] and not is_me and not is_admin \
-            and not is_assistant_admin:
+    if config['rule']['only_admin_answer_all'] and not is_me and not is_admin:
         return '回答所有人的只能管理设置啦'
 
     question_handler = config['comm']['answer_me'] if is_me else config['comm']['answer_all']
@@ -191,12 +187,12 @@ async def answer(ctx, _reg_flag=False):
         # 随机选个
         ans = random.choice(ans_list)
     else:
-        # 否则选最后一个
-        #ans = ans_list[-1]
-        # JAG: 优先选最后几项中最新的本群回答，否则选最新的全群问答
-        al = config['answer_local']
-        ans = next((c for c in reversed(
-            ans_list[-al:]) if c['group_id'] == group_id), ans_list[-1])
+        local_limit = config.get('local_limit', 5)
+        # JAG: 只在最近 N 条里找“真正的本群回答”
+        local_ans = next((c for c in reversed(ans_list[-local_limit:])
+                          if c['group_id'] == group_id and c['user_id'] not in admins), None)
+        # 找不到真正本群回答，就用最新的一条
+        ans = local_ans or ans_list[-1]
 
     # 判断是否是设置为自己的回复
     if ans['is_me']:
