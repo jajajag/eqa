@@ -71,6 +71,8 @@ async def eqa_main(*params):
     # 回复消息
     ans = await answer(ctx)
     if isinstance(ans, list):
+        # Filter for SnowLuma
+        ans = [x for x in ans if x.get('data', {}).get('text', 'x') != '']
         return await bot.send(ctx, ans)
     # elif isinstance(ans, str):
     #     return ans
