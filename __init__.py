@@ -191,8 +191,7 @@ async def answer(ctx, _reg_flag=False):
     else:
         local_limit = config.get('local_limit', 5)
         # JAG: 只在最近 N 条里找“真正的本群回答”
-        local_ans = next((c for c in reversed(ans_list[-local_limit:])
-                          if c['group_id'] == group_id and c['user_id'] not in admins), None)
+        local_ans = next((c for c in reversed(ans_list[-local_limit:]) if c['group_id'] == group_id), None)
         # 找不到真正本群回答，就用最新的一条
         ans = local_ans or ans_list[-1]
 
