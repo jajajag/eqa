@@ -44,7 +44,7 @@ comm:
 #规则
 rule:
   # 是否只允许管理员（包括群管）设置 comm.answer_all 的问题, true 的话群员就只能用 comm.answer_me 设置的问题了
-  only_admin_answer_all: false
+  only_admin_answer_all: true
 
   # 超级管理员设置的是否为所有群问答
   super_admin_is_all_group: true
@@ -59,10 +59,10 @@ rule:
   question_del_last: true
 
   # 设置重复的问题时 随机回答
-  multiple_question_random_answer: true
+  multiple_question_random_answer: false
 
   # 重复的问题时 优先回复自己设置的回答
-  priority_self_answer: true
+  priority_self_answer: false
 
   # 群员是否能查询别人问题
   member_can_show_other: true
