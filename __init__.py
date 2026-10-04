@@ -9,6 +9,7 @@
 import re
 import random
 from pathlib import Path
+from urllib.parse import urlsplit
 from nonebot import *
 from . import util
 
@@ -78,6 +79,25 @@ async def eqa_main(*params):
     #     return ans
 
 
+def has_disallowed_url(text):
+    allowed = [domain.lower() for domain in config.get('allowed_url_domains', ['qq.com'])]
+    urls = re.findall(
+        r'(?:[a-z][a-z0-9+.-]*://|//)[^\s<>"\'，。！？；、（）【】]+'
+        r'|(?<![a-z0-9_.-])(?:[a-z0-9_-]+\.)+[a-z]{2,}'
+        r'(?::\d+)?(?:[/?#][^\s<>"\'，。！？；、（）【】]*)?'
+        r'|\b\d{1,3}(?:\.\d{1,3}){3}\b', text, re.IGNORECASE
+    )
+    for url in urls:
+        url = url.rstrip('.,;:!?)]}')
+        try:
+            host = urlsplit(url if '://' in url or url.startswith('//') else '//' + url).hostname or ''
+        except ValueError:
+            return True
+        if '\\' in url or not any(host == domain or host.endswith('.' + domain) for domain in allowed):
+            return True
+    return False
+
+
 # 设置问题的函数
 async def ask(ctx, keyword, is_me):
     is_super_admin = ctx['user_id'] in admins
@@ -114,12 +134,20 @@ async def ask(ctx, keyword, is_me):
             if reg and not _once:
                 _once = True
                 ms = MessageSegment.text(reg[0])
+        message.append(ms)
+
+    # 先检查完整回复文字，避免拒绝保存前已下载图片或写入数据库。
+    answer_text = ''.join(ms['data']['text'] for ms in message if ms['type'] == 'text')
+    if has_disallowed_url(answer_text):
+        return '保存失败：回答中包含非法链接！'
+
+    for index, ms in enumerate(message):
         if ms['type'] == 'image':
             ms = util.ms_handler_image(ms, config['rule']['use_cq_code_image_url'], config['cache_dir'],
                                        b64=config['image_base64'])
             if not ms:
                 return '图片缓存失败了啦！'
-        message.append(ms)
+            message[index] = ms
 
     # 判断是否是正则表达式的问答
     reg_qus = util.get_msg_keyword(config['str']['reg_match_cmd'], qus, True)

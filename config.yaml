@@ -5,6 +5,10 @@ admins:
 # 同时存在本群管理和超级管理的问题，优先回答本群
 local_limit: 5
 
+# 回复文字允许的链接域名，同时允许其子域名；空列表表示不允许任何链接
+allowed_url_domains:
+  - qq.com
+
 # 缓存存放目录 该目录包括存放问答数据库和图片
 cache_dir: ./data/
 
