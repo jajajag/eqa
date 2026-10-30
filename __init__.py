@@ -6,6 +6,7 @@
 
 基于 nonebot 问答
 """
+import base64
 import re
 import random
 from pathlib import Path
@@ -250,11 +251,14 @@ async def answer(ctx, _reg_flag=False):
     
     for value in ans['message']:
         if value['type'] == 'image':
-            # 处理一下绝对路径问题
             img_path = Path(value['data']['file'])
             img_name = img_path.stem + img_path.suffix
             new_path = Path(__file__).parent / config['cache_dir'] / 'img' / img_name
-            value['data']['file'] = 'file:///' + str(new_path)
+    
+            if new_path.is_file():
+                with open(new_path, 'rb') as f:
+                    encoded = base64.b64encode(f.read()).decode('ascii')
+                value['data']['file'] = 'base64://' + encoded
             
     # 最后就是把验证成功的消息返回去
     return ans_msg
