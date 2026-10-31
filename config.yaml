@@ -1,9 +1,6 @@
 # 管理员
 admins:
-  - 389897773
-
-# 同时存在本群管理和超级管理的问题，优先回答本群
-local_limit: 5
+  - 123456789
 
 # 回复文字允许的链接域名，同时允许其子域名；空列表表示不允许任何链接
 allowed_url_domains:
@@ -50,6 +47,10 @@ rule:
 
   # 超级管理员设置的是否为所有群问答
   super_admin_is_all_group: true
+
+  # 禁用超级管理员跨群问答的群
+  super_admin_excluded_groups:
+    - 123456789
 
   # 只允许群管理员删除别人问答
   only_admin_can_delete: true
