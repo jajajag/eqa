@@ -199,8 +199,12 @@ async def answer(ctx, _reg_flag=False):
 
     # 获取到当前群的列表 判断是否来自该群 或者是否是超级管理员
     # 超级管理员设置的是否为所有群问答
+    #ans_list = util.filter_list(ans_list, lambda x: group_id == x['group_id'] or (
+    #    x['user_id'] in admins if super_admin_is_all_group else False))
+    # 指定的群不受超级管理员设置的群问答影响
     ans_list = util.filter_list(ans_list, lambda x: group_id == x['group_id'] or (
-        x['user_id'] in admins if super_admin_is_all_group else False))
+        x['user_id'] in admins if super_admin_is_all_group and group_id not in config['rule'].get(
+            'super_admin_excluded_groups', []) else False))
 
     # 木有在这群
     if not ans_list and _reg_flag:
@@ -218,13 +222,8 @@ async def answer(ctx, _reg_flag=False):
         # 随机选个
         ans = random.choice(ans_list)
     else:
-        local_limit = config.get('local_limit', 5)
-        # 只在最近 N 条里找本群回答；超级管理员的全群回答不算本群回答
-        local_ans = next((c for c in reversed(ans_list[-local_limit:])
-                          if c['group_id'] == group_id and not (
-                              super_admin_is_all_group and c['user_id'] in admins and not c['is_me'])), None)
-        # 找不到真正本群回答，就用最新的一条
-        ans = local_ans or ans_list[-1]
+        # 否则选最后一个
+        ans = ans_list[-1]
 
     # 判断是否是设置为自己的回复
     if ans['is_me']:
